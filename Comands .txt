@@ -1,0 +1,115 @@
+from django.contrib.auth.models import User
+
+from news_.models import Author, Category, Post, PostCategory, Comment
+
+user1 = User.objects.create_user('username1')  
+
+user2 = User.objects.create_user('username2')  
+
+author1 = Author.objects.create(full_name = 'Петров Пётр Петрович', rating = 5, user = user1)     
+
+author2 = Author.objects.create(full_name = 'Иванов Иван Иваныч', rating = 5, user = user2)
+
+category1 = Category.objects.create(name_category="Спорт")
+
+category2 = Category.objects.create(name_category="Политика")
+
+category3 = Category.objects.create(name_category="Образование")
+
+category4 = Category.objects.create(name_category="Технологии")
+
+
+text1 = """Спорт. Всего одно слово, а как много оно значит! Занятие спортом - определенный вид деятельности людей, направленная на достижение заданного результата в физическом развитии человека.
+Спорт - составная часть физической культуры, при которой основной упор делается на само физическое развитие человека, укрепление его здоровья и самочувствия.
+Профессиональный спорт - та его часть, в которой участвуют спортсмены, направленные именно на достижение определенного результата в своей физической деятельности, на достижение победы и новых спортивных рекордов. Спортивные состязания, среди которых Олимпиады, Чемпионаты и Турниры выявляют лучших спортсменов. Конечно, мечта каждого спортсмена - победа на Олимпийских играх, самых крупных мировых состязаниях, которые возникли еще в Древней Греции, а впоследствии собирали участников со всего мира."""
+
+post1 = Post.objects.create(author=author1, heading='Что такое СПОРТ?', text=text1, rating=1, choice='article')
+
+
+text2 = """В современном обществе высшее образование является неотъемлемой частью развития как личности, так и общества в целом. Стремительное развитие всех областей жизнедеятельности делает необходимым наличие высшего образования у половины всего занятого населения, как минимум. На сегодняшний день система образования предоставляет абитуриенту множество способов получения высшего образования: очная или заочная формы обучения, платная и бесплатная основы, свободный график посещения, а также возможность получения одновременно двух и более образований"""
+
+post2 = Post.objects.create(author=author2, heading='Очно или заочно? Какую форму обучения выбрать?', text=text2, rating=1, choice='article')
+
+
+text3 = """Управление программы оборонных закупок Южной Кореи (DAPA) сообщило о разработке совместно с компанией Hanwha Aerospace лазерного оружия для уничтожения северокорейских беспилотников в рамках программы «Проект звездных войн».
+Как сообщили в DAPA, небольшие БПЛА будут уничтожаться с помощью оптоволоконного лазера ближнего действия. Поражающий импульс продолжительностью от 10 до 20 секунд будет выводить из строя двигатели дронов, печатные платы и другие электронные системы."""
+
+post3 = Post.objects.create(author=author1, heading='Южнокорейский проект «Звездных войн» намерен использовать лазеры для уничтожения дронов Пхеньяна', text=text3, rating=1, choice='news')
+
+post1.category.add(category1)
+
+post2.category.add(category3)
+
+post3.category.add(category3, category4)
+
+comment1 = Comment.objects.create(post = post1, user = user2, text='niiiice', rating = 6)
+
+comment2 = Comment.objects.create(post = post2, user = user1, text='good', rating = 4)
+
+comment3 = Comment.objects.create(post = post3, user = user1, text='bad', rating = 2)
+
+comment4 = Comment.objects.create(post = post3, user = user2, text='great', rating = 7)
+
+comment4.like() 
+
+comment3.dislike() 
+
+comment2.dislike() 
+
+comment1.like() 
+
+post1.like()
+
+post2.like()
+
+post3.like()
+
+
+author1.update_rating()
+
+author2.update_rating()
+
+
+best_user = User.objects.order_by('-author__rating')[0]
+print(f"Лучший пользователь: {best_user.username} (рейтинг: {best_user.author.rating})")
+
+
+best_post = Post.objects.order_by('-rating')[0]
+print(f"Дата: {best_post.date_create}, Автор: {best_post.author.user.username}, Рейтинг: {best_post.rating}, Заголовок: {best_post.heading}, Превью: {best_post.preview()}")
+
+
+comments = post.comment_set.all()
+for comment in comments:
+    print(f"Дата: {comment.date_create}, Пользователь: {comment.user.username}, Рейтинг: {comment.rating}, Текст: {comment.text}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
